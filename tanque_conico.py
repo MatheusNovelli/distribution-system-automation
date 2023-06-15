@@ -27,7 +27,7 @@ class TanqueConico(Thread):
 
         def tank_behavior():
                 self.h = (T*(qin.get_value()-cv*math.sqrt(self.h)))/math.pow((math.pi * (r0 + alpha*self.h)), 2) + self.h
-                # print("Altura do tanque: ", self.h)
+                print("Altura do tanque: ", self.h)
                 node1.set_value(self.h) 
         
         timer = LoopTimer(0.1, tank_behavior)
@@ -37,3 +37,5 @@ class TanqueConico(Thread):
         sleep(120)
 
         timer.cancel()
+
+        clientOPC.disconnect()

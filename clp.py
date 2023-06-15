@@ -5,7 +5,8 @@ import time
 from opcua import Client
 
 h = 0.0
-
+href = 0.0
+waiting_href = True
 class ClientOPC(Thread):
     def __init__(self):
         Thread.__init__(self)
@@ -15,23 +16,24 @@ class ClientOPC(Thread):
         self.prev_error = 0.0
     
     def run(self):
-        print("Rodando client")
         clientOPC = Client("opc.tcp://localhost:53530/OPCUA/SimulationServer")
 
         clientOPC.connect()
 
         node1 = clientOPC.get_node("ns=3;i=1008")
-
+        
         global h
         h = node1
 
         node2 = clientOPC.get_node("ns=3;i=1009")
         
-        href = 4.0
         K = 2
         Ti = 30
         Td = 0.5
         T = 0.1
+
+        while waiting_href:
+            pass
 
         def control_system():
             prev_h = h.get_value()
@@ -40,7 +42,6 @@ class ClientOPC(Thread):
             D = (self.error - self.prev_error)/T
 
             self.qin = K * (P + (1/Ti)*self.I + Td * D)
-            
             self.error = href - h.get_value()
             self.prev_error = href - prev_h
 
@@ -53,6 +54,8 @@ class ClientOPC(Thread):
         time.sleep(120)
 
         timer.cancel()
+        
+        clientOPC.disconnect()
 
 class ServerTCP(Thread):
     def __init__(self):
@@ -63,16 +66,29 @@ class ServerTCP(Thread):
         s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
         s.bind((socket.gethostname(), 8000))
         s.listen()    
-        print("Rodando server")
         clientsocket, address = s.accept()
+
+        while True:
+            data = json.loads(clientsocket.recv(1024))
+            if not data:
+                break
+            global href
+            href = float(data)
+            global waiting_href
+            waiting_href = False
+            break
 
         def send_message():
             clientsocket.sendall(bytes(json.dumps(str(h.get_value())).encode()))
 
-        timer = LoopTimer(0.2, send_message)
-        
+        timer = LoopTimer(0.2, send_message)    
         timer.start()
-
         time.sleep(120)
+        timer.cancel()  
+        s.close()
 
-        timer.cancel()
+
+        
+        
+
+        
