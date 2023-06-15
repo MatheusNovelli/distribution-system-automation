@@ -16,8 +16,13 @@ def tcp_client(href):
             data_rcv = json.loads(s.recv(1024))
             f = open("historiador.txt", "a")
             f.write(data_rcv + "\n")
-            if float(data_rcv)/float(href) < 0.05:
+            if float(data_rcv)/5.0 < 0.05:
                 with open('below.txt', 'r') as f:
+                    for line in f:
+                        print(line.rstrip())
+            
+            elif float(data_rcv)/5.0 > 0.95:
+                with open('above.txt', 'r') as f:
                     for line in f:
                         print(line.rstrip())
 
