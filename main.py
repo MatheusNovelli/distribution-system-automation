@@ -4,7 +4,6 @@ from tanque_conico import TanqueConico
 from multiprocessing import Process
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import time
 
 fig = plt.figure()
 ax = fig.add_subplot(1,1,1)
