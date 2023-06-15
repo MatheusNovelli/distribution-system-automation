@@ -7,8 +7,11 @@ Operação e controle da altura do líquido de um tanque industrial, garantindo 
 ## Especificações do tanque
 
 **-> Altura máxima: 5.0m**
+
 **-> Raio 0 (entrada): 1.0m**
+
 **-> Raio 1 (saída): 2.0m**
+
 **-> Coeficiente de descarga de saída: 1.2**
 
 ## Estrutura de arquivos
